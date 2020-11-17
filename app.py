@@ -18,20 +18,23 @@ def predict():
 
     output = round(prediction[0], 2)
     if output == 0:
-        output = 'Bukan Pembeli'
+        output = 'Not Purchase'
     else:
-        output = 'Pembeli'
+        output = 'Purchased'
 
-    return render_template('index.html', prediction_text='Anda {}'.format(output))
+    return render_template('index.html', prediction_text='The Customer {}'.format(output))
 
-@app.route('/results',methods=['POST'])
-def results():
-
-    data = request.get_json(force=True)
-    prediction = model.predict([np.array(list(data.values()))])
-
-    output = prediction[0]
-    return jsonify(output)
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
